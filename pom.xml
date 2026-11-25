@@ -1,23 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rash.rage</groupId>
     <artifactId>rage</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Rash-collection/rage</url>
+        </repository>
+    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>24</maven.compiler.release>
+        <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>rage.Rage</exec.mainClass>
     </properties>
     <name>Ra$hid Age (Rage)</name>
     <description>
-        Chill game for adults, less 'rage' yet more R.A.G.E (Relax, Adults, Game, Enjoy).
+        Chill game for adults, less 'rage' yet more R.A.G.E
+        (Relax, Adults, Game, Enjoy).
     </description>
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.22.4</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
+            <!-- Thin JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -29,6 +45,38 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <!-- Fat JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+<!--                            
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>groupId:artifactId</exclude>
+                                </excludes>
+                            </artifactSet>
+                            -->
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>all</shadedClassifierName>
+                            <transformers>
+                                <transformer implementation=
+                                    "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${exec.mainClass}</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
